@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Intentional Alignment — Anurag Rishi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black:    #06070a;
+      --deep:     #0b0d12;
+      --surface:  #111318;
+      --card:     #161921;
+      --border:   rgba(210,175,110,0.12);
+      --gold:     #d4a853;
+      --gold-lt:  #eecf8a;
+      --gold-dim: rgba(212,168,83,0.25);
+      --saffron:  #e07b39;
+      --white:    #f2ede4;
+      --muted:    rgba(242,237,228,0.45);
+      --muted2:   rgba(242,237,228,0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* GRAIN */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 56px;
+      background: linear-gradient(to bottom, rgba(6,7,10,0.95) 0%, transparent 100%);
+      backdrop-filter: blur(0px);
+    }
+    .nav-brand { display: flex; flex-direction: column; gap: 2px; }
+    .nav-brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold);
+      text-decoration: none;
+    }
+    .nav-brand-sub {
+      font-size: 0.58rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--muted2);
+    }
+    .nav-pill {
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.65rem; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 11px 28px; text-decoration: none;
+      transition: background 0.3s;
+    }
+    .nav-pill:hover { background: var(--gold-lt); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      position: relative; overflow: hidden;
+      padding: 140px 32px 100px;
+    }
+
+    /* Atmospheric bg */
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% 45%, rgba(212,168,83,0.065) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 40% at 15% 85%, rgba(224,123,57,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 45% at 85% 15%, rgba(100,70,180,0.06) 0%, transparent 55%),
+        linear-gradient(180deg, #06070a 0%, #0c0e15 50%, #06070a 100%);
+    }
+
+    /* Sacred geometry SVG */
+    .sacred {
+      position: absolute;
+      width: 700px; height: 700px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.055;
+      animation: slowSpin 120s linear infinite;
+    }
+    @keyframes slowSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .orb-1 { width: 350px; height: 350px; top: 10%; left: 5%; background: rgba(212,168,83,0.045); animation: floatA 18s ease-in-out infinite; }
+    .orb-2 { width: 280px; height: 280px; bottom: 15%; right: 8%; background: rgba(224,123,57,0.04); animation: floatB 22s ease-in-out infinite; }
+    @keyframes floatA { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-30px)} }
+    @keyframes floatB { 0%,100%{transform:translateY(0)} 50%{transform:translateY(25px)} }
+
+    .hero-date-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 1px solid var(--gold-dim);
+      padding: 8px 22px;
+      margin-bottom: 40px;
+      opacity: 0; animation: riseIn 0.9s ease 0.2s forwards;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--saffron); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+    .badge-text { font-size: 0.63rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
+
+    .hero-eyebrow {
+      font-size: 0.65rem; letter-spacing: 0.45em;
+      text-transform: uppercase; color: var(--muted2);
+      margin-bottom: 20px;
+      opacity: 0; animation: riseIn 0.9s ease 0.4s forwards;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.8rem, 9vw, 8.5rem);
+      font-weight: 300; line-height: 0.95;
+      letter-spacing: -0.02em;
+      opacity: 0; animation: riseIn 0.9s ease 0.55s forwards;
+    }
+    .hero h1 span { display: block; }
+    .hero h1 .accent { font-style: italic; color: var(--gold-lt); }
+
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.2vw, 1.45rem);
+      font-style: italic; font-weight: 300;
+      color: var(--muted); line-height: 1.7;
+      max-width: 560px; margin: 32px auto 0;
+      opacity: 0; animation: riseIn 0.9s ease 0.75s forwards;
+    }
+
+    .hero-meta {
+      display: flex; align-items: center; gap: 32px;
+      margin-top: 56px; flex-wrap: wrap; justify-content: center;
+      opacity: 0; animation: riseIn 0.9s ease 0.9s forwards;
+    }
+    .meta-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .meta-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; color: var(--gold);
+    }
+    .meta-label { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted2); }
+    .meta-sep { width: 1px; height: 40px; background: var(--border); }
+
+    .hero-actions {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      justify-content: center; margin-top: 52px;
+      opacity: 0; animation: riseIn 0.9s ease 1.05s forwards;
+    }
+
+    .btn-gold {
+      background: var(--gold); color: var(--black);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 16px 44px; border: none; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-2px); }
+
+    .btn-outline {
+      background: transparent; color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem; font-weight: 300;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 15px 44px;
+      border: 1px solid var(--gold-dim); cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: all 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold-lt); }
+
+    .price-hero {
+      margin-top: 36px;
+      opacity: 0; animation: riseIn 0.9s ease 1.2s forwards;
+    }
+    .price-old { font-size: 0.9rem; color: var(--muted2); text-decoration: line-through; }
+    .price-new {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem; font-weight: 300; color: var(--gold);
+    }
+    .price-new sup { font-size: 1.1rem; vertical-align: top; margin-top: 8px; display: inline-block; }
+    .price-note { font-size: 0.7rem; color: var(--muted2); margin-top: 4px; }
+
+    .scroll-line-wrap {
+      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0; animation: riseIn 1s ease 1.5s forwards;
+    }
+    .scroll-label { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--muted2); }
+    .scroll-bar { width: 1px; height: 44px; background: linear-gradient(to bottom, var(--gold-dim), transparent); animation: breathe 2s ease infinite; }
+    @keyframes breathe { 0%,100%{opacity:0.3}50%{opacity:1} }
+
+    @keyframes riseIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── SECTION STYLES ── */
+    section { padding: 110px 40px; }
+    .container { max-width: 1080px; margin: 0 auto; }
+
+    .tag {
+      font-size: 0.6rem; letter-spacing: 0.42em;
+      text-transform: uppercase; color: var(--gold);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .tag::before { content:''; display:block; width:28px; height:1px; background:var(--gold-dim); }
+
+    .h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 300; line-height: 1.1; color: var(--white);
+    }
+    .h2 em { font-style: italic; color: var(--gold-lt); }
+
+    /* ── ABOUT ANURAG ── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center;
+    }
+    .about-visual {
+      position: relative; height: 460px; display: flex; align-items: center; justify-content: center;
+    }
+    .rings-wrap { position: relative; width: 360px; height: 360px; }
+    .ring {
+      position: absolute; border-radius: 50%;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      border: 1px solid var(--border);
+    }
+    .ring-1 { width: 340px; height: 340px; animation: rotateCW 45s linear infinite; }
+    .ring-2 { width: 250px; height: 250px; border-color: rgba(212,168,83,0.18); animation: rotateCCW 30s linear infinite; }
+    .ring-3 { width: 160px; height: 160px; animation: rotateCW 20s linear infinite; }
+    .ring-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 80px; height: 80px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,168,83,0.2) 0%, transparent 70%);
+      border: 1px solid var(--gold-dim);
+    }
+    .ring-dot {
+      position: absolute; width: 7px; height: 7px;
+      border-radius: 50%; background: var(--gold);
+      top: -3.5px; left: 50%; transform: translateX(-50%);
+    }
+    @keyframes rotateCW  { to { transform: translate(-50%,-50%) rotate(360deg); } }
+    @keyframes rotateCCW { to { transform: translate(-50%,-50%) rotate(-360deg); } }
+
+    .glow-ring {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 380px; height: 380px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,168,83,0.06) 0%, transparent 65%);
+    }
+
+    .about-content .h2 { margin-bottom: 28px; }
+    .about-content p {
+      font-size: 0.95rem; line-height: 1.95; color: var(--muted); margin-bottom: 18px;
+    }
+    .about-quote {
+      border-left: 2px solid var(--gold-dim);
+      padding-left: 20px; margin: 32px 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-style: italic;
+      color: var(--gold-lt); line-height: 1.7;
+    }
+
+    /* ── WHAT YOU'LL RECEIVE ── */
+    .receive { background: var(--deep); }
+    .receive-header { text-align: center; max-width: 620px; margin: 0 auto 72px; }
+    .receive-header .h2 { margin-top: 16px; margin-bottom: 18px; }
+    .receive-header p { font-size: 0.9rem; color: var(--muted); line-height: 1.8; }
+
+    .modules-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    }
+    .module {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 40px 32px;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .module::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .module:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .module:hover::before { opacity: 1; }
+
+    .module-icon {
+      font-size: 1.6rem; margin-bottom: 20px;
+      filter: grayscale(30%);
+    }
+    .module-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem; font-weight: 300;
+      color: rgba(212,168,83,0.1); line-height: 1;
+      position: absolute; top: 20px; right: 24px;
+    }
+    .module h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 400;
+      color: var(--gold-lt); margin-bottom: 10px;
+    }
+    .module p { font-size: 0.83rem; line-height: 1.75; color: var(--muted); }
+
+    /* ── WHO IT'S FOR ── */
+    .for-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; margin-top: 56px;
+    }
+    .for-list { list-style: none; }
+    .for-list li {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 18px 0; border-bottom: 1px solid rgba(212,168,83,0.07);
+      font-size: 0.88rem; line-height: 1.6; color: var(--muted);
+    }
+    .for-list li .check {
+      color: var(--gold); font-size: 0.7rem; flex-shrink: 0; margin-top: 3px;
+    }
+    .for-highlight {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 44px 40px;
+    }
+    .for-highlight h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-style: italic;
+      color: var(--gold-lt); margin-bottom: 20px; line-height: 1.3;
+    }
+    .for-highlight p { font-size: 0.88rem; line-height: 1.85; color: var(--muted); }
+    .founder-sig {
+      margin-top: 28px; display: flex; align-items: center; gap: 14px;
+    }
+    .sig-line { flex: 1; height: 1px; background: var(--border); }
+    .sig-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--gold); letter-spacing: 0.1em; }
+
+    /* ── PRICING ── */
+    .pricing { background: var(--deep); }
+    .pricing-center { text-align: center; margin-bottom: 72px; }
+    .pricing-center .h2 { margin: 16px 0 18px; }
+    .pricing-center p { font-size: 0.9rem; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.8; }
+
+    .price-box {
+      max-width: 620px; margin: 0 auto;
+      background: var(--card); border: 1px solid var(--gold-dim);
+      padding: 60px 60px 52px;
+      position: relative; text-align: center;
+    }
+    .price-box::before {
+      content: '';
+      position: absolute; inset: -1px;
+      background: linear-gradient(135deg, rgba(212,168,83,0.15) 0%, transparent 50%, rgba(212,168,83,0.08) 100%);
+      pointer-events: none;
+    }
+
+    .price-live-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(224,123,57,0.15); border: 1px solid rgba(224,123,57,0.3);
+      padding: 7px 18px; margin-bottom: 32px;
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--saffron); animation: pulse 1.5s infinite; }
+    .live-text { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--saffron); }
+
+    .price-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300;
+      color: var(--white); margin-bottom: 8px;
+    }
+    .price-date {
+      font-size: 0.7rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted2); margin-bottom: 40px;
+    }
+
+    .price-divider { height: 1px; background: var(--border); margin: 0 -20px 36px; }
+
+    .price-features { list-style: none; text-align: left; margin-bottom: 44px; }
+    .price-features li {
+      display: flex; gap: 14px; align-items: flex-start;
+      font-size: 0.87rem; line-height: 1.6; color: var(--muted);
+      padding: 10px 0; border-bottom: 1px solid rgba(212,168,83,0.06);
+    }
+    .price-features li::before {
+      content: '◈'; color: var(--gold); font-size: 0.55rem;
+      flex-shrink: 0; margin-top: 4px;
+    }
+
+    .price-amount-wrap { margin-bottom: 36px; }
+    .price-was { font-size: 1rem; color: var(--muted2); text-decoration: line-through; margin-bottom: 6px; }
+    .price-now {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem; font-weight: 300; color: var(--gold); line-height: 1;
+    }
+    .price-now sup { font-size: 2rem; vertical-align: top; margin-top: 16px; display: inline-block; }
+    .price-per { font-size: 0.72rem; color: var(--muted2); letter-spacing: 0.15em; margin-top: 8px; }
+
+    .price-cta { display: block; width: 100%; }
+    .urgency {
+      margin-top: 20px; font-size: 0.72rem;
+      color: var(--muted2); letter-spacing: 0.08em;
+    }
+    .urgency strong { color: var(--saffron); }
+
+    /* ── FACILITATOR ── */
+    .facilitator { background: var(--black); }
+    .fac-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .fac-img-wrap { position: relative; }
+    .fac-img-frame {
+      width: 100%; aspect-ratio: 3/4;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .fac-img-frame img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.88) contrast(1.05); }
+    .fac-img-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+    }
+    .fac-initials {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem; font-weight: 300; color: var(--gold-dim);
+    }
+    .fac-img-corner {
+      position: absolute; bottom: -12px; right: -12px;
+      width: 80px; height: 80px; border-right: 2px solid var(--gold-dim); border-bottom: 2px solid var(--gold-dim);
+    }
+    .fac-img-corner2 {
+      position: absolute; top: -12px; left: -12px;
+      width: 80px; height: 80px; border-left: 2px solid var(--gold-dim); border-top: 2px solid var(--gold-dim);
+    }
+
+    .fac-content .tag { margin-bottom: 16px; }
+    .fac-content .h2 { margin-bottom: 24px; }
+    .fac-content p { font-size: 0.9rem; line-height: 1.9; color: var(--muted); margin-bottom: 16px; }
+
+    .stats-row { display: flex; gap: 0; margin-top: 40px; }
+    .stat {
+      flex: 1; padding: 24px 28px;
+      background: var(--card); border: 1px solid var(--border);
+    }
+    .stat + .stat { border-left: none; }
+    .stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem; font-weight: 300; color: var(--gold); line-height: 1;
+    }
+    .stat-lbl { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted2); margin-top: 4px; }
+
+    /* ── TESTIMONIALS ── */
+    .testi-section { background: var(--deep); }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+    .testi-card {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 40px 32px; transition: border-color 0.3s;
+    }
+    .testi-card:hover { border-color: var(--gold-dim); }
+    .testi-stars { color: var(--gold); letter-spacing: 4px; font-size: 0.65rem; margin-bottom: 18px; }
+    .testi-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-style: italic;
+      line-height: 1.8; color: rgba(242,237,228,0.82);
+      margin-bottom: 24px;
+    }
+    .testi-author { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+    .testi-loc { font-size: 0.75rem; color: var(--muted2); margin-top: 4px; }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 720px; margin: 56px auto 0; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 28px 0; cursor: pointer;
+    }
+    .faq-q {
+      display: flex; justify-content: space-between; align-items: center; gap: 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; color: var(--white); font-weight: 400;
+    }
+    .faq-q .icon { color: var(--gold); font-size: 1.2rem; flex-shrink: 0; transition: transform 0.3s; }
+    .faq-item.open .faq-q .icon { transform: rotate(45deg); }
+    .faq-a {
+      font-size: 0.88rem; line-height: 1.8; color: var(--muted);
+      max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 16px; }
+
+    /* ── REGISTER ── */
+    .register { background: var(--black); }
+    .register-wrap {
+      max-width: 560px; margin: 0 auto; text-align: center;
+    }
+    .register-wrap .h2 { margin: 16px 0 16px; }
+    .register-wrap > p { font-size: 0.88rem; color: var(--muted); line-height: 1.8; margin-bottom: 48px; }
+
+    .form-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; text-align: left; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.full { grid-column: 1/-1; }
+    .field label { font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
+    .field input, .field select {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--white); font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 300;
+      padding: 13px 16px; outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus { border-color: var(--gold-dim); }
+    .field input::placeholder { color: rgba(242,237,228,0.2); }
+    .field select option { background: var(--card); }
+
+    .form-submit { grid-column: 1/-1; margin-top: 6px; }
+    .form-submit .btn-gold { width: 100%; text-align: center; }
+    .form-note { font-size: 0.7rem; color: var(--muted2); margin-top: 20px; line-height: 1.7; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      padding: 56px 56px 36px;
+    }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 32px; }
+    .footer-brand-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); }
+    .footer-tagline { font-size: 0.75rem; color: var(--muted2); margin-top: 6px; max-width: 260px; line-height: 1.7; }
+    .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted2); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(242,237,228,0.15); text-transform: uppercase; margin-top: 40px; text-align: center; }
+
+    /* ── VIDEO TESTIMONIALS ── */
+    .video-testi { background: var(--black); }
+    .video-testi-header { text-align: center; margin-bottom: 64px; }
+    .video-testi-header .h2 { margin: 16px 0 16px; }
+    .video-testi-header p { font-size: 0.88rem; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.8; }
+
+    .video-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+
+    .video-card {
+      background: var(--card); border: 1px solid var(--border);
+      overflow: hidden; transition: border-color 0.3s, transform 0.3s;
+      position: relative;
+    }
+    .video-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+
+    /* YouTube / iframe embed */
+    .video-embed {
+      position: relative; width: 100%; padding-bottom: 56.25%; /* 16:9 */
+      background: #0a0b0e; overflow: hidden;
+    }
+    .video-embed iframe {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%; border: none;
+    }
+
+    /* Placeholder shown when no URL added yet */
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+      background: linear-gradient(135deg, #0f1118 0%, #161921 100%);
+      cursor: pointer;
+    }
+    .play-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 1px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .video-card:hover .play-ring { border-color: var(--gold); background: rgba(212,168,83,0.08); }
+    .play-triangle {
+      width: 0; height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 18px solid var(--gold);
+      margin-left: 4px;
+    }
+    .video-placeholder-text {
+      font-size: 0.65rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted2);
+    }
+
+    .video-info {
+      padding: 22px 24px 26px;
+    }
+    .video-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--gold-lt); margin-bottom: 4px;
+    }
+    .video-role { font-size: 0.72rem; color: var(--muted2); letter-spacing: 0.1em; }
+    .video-quote {
+      font-size: 0.82rem; color: var(--muted);
+      line-height: 1.65; margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* How to add instruction box */
+    .video-howto {
+      margin-top: 48px;
+      background: var(--card); border: 1px solid var(--gold-dim);
+      padding: 28px 32px;
+      display: flex; align-items: flex-start; gap: 20px;
+    }
+    .howto-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+    .howto-title {
+      font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+    }
+    .howto-steps { list-style: none; }
+    .howto-steps li {
+      font-size: 0.82rem; color: var(--muted); line-height: 1.7;
+      padding: 4px 0; display: flex; gap: 10px;
+    }
+    .howto-steps li span { color: var(--gold); font-weight: 400; flex-shrink: 0; }
+    code {
+      background: rgba(212,168,83,0.1); color: var(--gold-lt);
+      padding: 2px 7px; font-size: 0.78rem; border-radius: 2px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px) {
+      nav { padding: 20px 24px; }
+      section { padding: 72px 24px; }
+      .about-grid, .for-grid, .fac-grid { grid-template-columns: 1fr; gap: 40px; }
+      .modules-grid { grid-template-columns: 1fr; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .price-box { padding: 44px 28px 40px; }
+      .stats-row { flex-direction: column; }
+      .stat + .stat { border-left: 1px solid var(--border); border-top: none; }
+      .form-fields { grid-template-columns: 1fr; }
+      footer { padding: 48px 24px 32px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .video-grid { grid-template-columns: 1fr; }
+      .video-howto { flex-direction: column; gap: 12px; }
+      
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://anuragrishi.com" class="nav-brand-name" style="text-decoration:none;">
+    <div class="nav-brand">
+      <span class="nav-brand-name">Anurag Rishi</span>
+      <span class="nav-brand-sub">Holistic Wellness Coach</span>
+    </div>
+  </a>
+  <a href="#register" class="nav-pill">Book Now — ₹199</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <svg class="sacred" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="250" cy="250" r="240" stroke="#d4a853" stroke-width="0.6"/>
+    <circle cx="250" cy="250" r="190" stroke="#d4a853" stroke-width="0.5"/>
+    <circle cx="250" cy="250" r="140" stroke="#d4a853" stroke-width="0.5"/>
+    <circle cx="250" cy="250" r="90" stroke="#d4a853" stroke-width="0.5"/>
+    <circle cx="250" cy="250" r="40" stroke="#d4a853" stroke-width="0.8"/>
+    <line x1="250" y1="10" x2="250" y2="490" stroke="#d4a853" stroke-width="0.4"/>
+    <line x1="10" y1="250" x2="490" y2="250" stroke="#d4a853" stroke-width="0.4"/>
+    <line x1="80" y1="80" x2="420" y2="420" stroke="#d4a853" stroke-width="0.4"/>
+    <line x1="420" y1="80" x2="80" y2="420" stroke="#d4a853" stroke-width="0.4"/>
+    <polygon points="250,20 460,380 40,380" stroke="#d4a853" stroke-width="0.5" fill="none"/>
+    <polygon points="250,480 460,120 40,120" stroke="#d4a853" stroke-width="0.5" fill="none"/>
+    <circle cx="250" cy="250" r="6" fill="#d4a853" opacity="0.4"/>
+  </svg>
+
+  <div class="hero-date-badge">
+    <div class="badge-dot"></div>
+    <span class="badge-text">Live Masterclass · 28th March 2026</span>
+  </div>
+
+  <p class="hero-eyebrow">A Masterclass by Anurag Rishi</p>
+
+  <h1>
+    <span>Intentional</span>
+    <span class="accent">Alignment</span>
+  </h1>
+
+  <p class="hero-tagline">Align your mind, body & soul through the union of ancient wisdom and modern science — and step into the life you were meant to live.</p>
+
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-val">28</span>
+      <span class="meta-label">March 2026</span>
+    </div>
+    <div class="meta-sep"></div>
+    <div class="meta-item">
+      <span class="meta-val">Live</span>
+      <span class="meta-label">Session</span>
+    </div>
+    <div class="meta-sep"></div>
+    <div class="meta-item">
+      <span class="meta-val">11+</span>
+      <span class="meta-label">Years of Wisdom</span>
+    </div>
+    <div class="meta-sep"></div>
+    <div class="meta-item">
+      <span class="meta-val">30+</span>
+      <span class="meta-label">Countries Reached</span>
+    </div>
+  </div>
+
+  <div class="hero-actions">
+    <a href="https://rzp.io/rzp/2DBAip09" target="_blank" class="btn-gold">Reserve My Seat Now</a>
+    <a href="#about" class="btn-outline">Learn More</a>
+  </div>
+
+  <div class="price-hero">
+    <div class="price-old">₹999</div>
+    <div class="price-new"><sup>₹</sup>199<span style="font-size:1.4rem;color:var(--muted2);font-family:'DM Sans',sans-serif;font-weight:300;"> +fee</span></div>
+    <div class="price-note">Limited seats · Early bird offer</div>
+  </div>
+
+  <div class="scroll-line-wrap">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-bar"></div>
+  </div>
+</section>
+
+<!-- ABOUT PROGRAM -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual">
+        <div class="glow-ring"></div>
+        <div class="rings-wrap">
+          <div class="ring ring-1"><div class="ring-dot"></div></div>
+          <div class="ring ring-2"><div class="ring-dot"></div></div>
+          <div class="ring ring-3"><div class="ring-dot"></div></div>
+          <div class="ring-center"></div>
+        </div>
+      </div>
+      <div class="about-content">
+        <div class="tag">The Masterclass</div>
+        <h2 class="h2">Where Ancient Wisdom<br/>Meets <em>Modern Science</em></h2>
+        <p>Intentional Alignment is a live masterclass that goes beyond motivation. It is a carefully designed experience that bridges classical Indian healing philosophies — Advaita Vedanta, the Upanishads — with quantum physics, psychology, and mind-body science.</p>
+        <p>In one transformative session, you will learn practical tools and techniques to dissolve inner resistance, restore physical and mental harmony, and align your deepest intentions with the energy of the universe.</p>
+        <div class="about-quote">
+          "He teaches only what he has practiced. And he shares only what he has lived."
+        </div>
+        <a href="https://rzp.io/rzp/2DBAip09" target="_blank" class="btn-gold">Book Your Seat — ₹199</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU'LL RECEIVE -->
+<section class="receive" id="program">
+  <div class="container">
+    <div class="receive-header">
+      <div class="tag" style="justify-content:center;">What You Will Experience</div>
+      <h2 class="h2">Six Pillars of<br/><em>Intentional Alignment</em></h2>
+      <p>Each dimension of this masterclass is designed to create a complete shift — from how you think, to how you heal, to how you live.</p>
+    </div>
+    <div class="modules-grid">
+      <div class="module">
+        <div class="module-num">01</div>
+        <div class="module-icon">🧠</div>
+        <h3>Mind Programming</h3>
+        <p>Rewire limiting thought patterns using a blend of ancient contemplative practices and modern neuroscience. Create the inner architecture of clarity.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">02</div>
+        <div class="module-icon">🌬️</div>
+        <h3>Breath & Body Intelligence</h3>
+        <p>Access your body's innate healing intelligence through pranayama and somatic awareness techniques passed down through Vedic traditions.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">03</div>
+        <div class="module-icon">⚡</div>
+        <h3>Quantum Intention</h3>
+        <p>Learn how the field of quantum physics validates the power of conscious intention — and how to use this understanding practically in your daily life.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">04</div>
+        <div class="module-icon">🔥</div>
+        <h3>Emotional Liberation</h3>
+        <p>Release stored emotional blocks that silently drain your energy and prevent alignment. Experience lightness and freedom from within.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">05</div>
+        <div class="module-icon">🌿</div>
+        <h3>Physical Harmony</h3>
+        <p>Understand how mental and spiritual misalignment manifests as physical disease — and how restoring inner coherence begins natural healing.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">06</div>
+        <div class="module-icon">🌟</div>
+        <h3>Conscious Manifestation</h3>
+        <p>Move from reactive living to intentional creation. Design your reality from a place of alignment, not urgency — with tools you can use forever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section>
+  <div class="container">
+    <div class="tag">Is This for You?</div>
+    <h2 class="h2" style="margin-bottom:0;">This Masterclass<br/>Is Designed <em>For You</em> If…</h2>
+    <div class="for-grid">
+      <ul class="for-list">
+        <li><span class="check">◈</span> You feel disconnected from your true self and purpose</li>
+        <li><span class="check">◈</span> Stress, anxiety, or chronic fatigue has become your normal</li>
+        <li><span class="check">◈</span> You sense there is more to life but don't know how to access it</li>
+        <li><span class="check">◈</span> You've tried motivation but want real, lasting inner change</li>
+        <li><span class="check">◈</span> You are drawn to ancient wisdom but want scientific grounding</li>
+        <li><span class="check">◈</span> You want to heal your body naturally from the inside out</li>
+        <li><span class="check">◈</span> You are ready to stop surviving and start consciously living</li>
+      </ul>
+      <div class="for-highlight">
+        <h3>"The shift you are looking for begins with one aligned decision."</h3>
+        <p>This is not a motivational talk. It is an experiential masterclass. You won't just learn — you will feel the shift happening within you as it unfolds. Come ready to receive.</p>
+        <div class="founder-sig">
+          <div class="sig-line"></div>
+          <span class="sig-name">— Anurag Rishi</span>
+          <div class="sig-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-center">
+      <div class="tag" style="justify-content:center;">Your Investment</div>
+      <h2 class="h2">One Session.<br/><em>Lifetime Shift.</em></h2>
+      <p>At ₹199, this is the most accessible gateway to the teachings of Anurag Rishi. Reserve your place before seats close.</p>
+    </div>
+
+    <div class="price-box">
+      <div class="price-live-badge">
+        <div class="live-dot"></div>
+        <span class="live-text">Live Session · 28th March 2026</span>
+      </div>
+      <div class="price-title">Intentional Alignment Masterclass</div>
+      <div class="price-date">with Anurag Rishi · Online · Live</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>Live interactive session with Anurag Rishi</li>
+        <li>Blend of Vedic wisdom + quantum science teachings</li>
+        <li>Practical alignment tools you can use immediately</li>
+        <li>Guided meditation & breathwork experience</li>
+        <li>Q&A with the facilitator post-session</li>
+        <li>Session recording access (limited period)</li>
+      </ul>
+      <div class="price-amount-wrap">
+        <div class="price-was">Original Price: ₹999</div>
+        <div class="price-now"><sup>₹</sup>199</div>
+        <div class="price-per">+ applicable fee · One-time payment</div>
+      </div>
+      <a href="https://rzp.io/rzp/2DBAip09" target="_blank" class="btn-gold price-cta">Reserve My Seat Now</a>
+      <p class="urgency">⚡ <strong>Limited seats available.</strong> Price may increase as we approach the date.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FACILITATOR -->
+<section class="facilitator" id="facilitator">
+  <div class="container">
+    <div class="fac-grid">
+      <div class="fac-img-wrap">
+        <div class="fac-img-corner2"></div>
+        <div class="fac-img-frame">
+          <img src="https://wp19.krepoint.com/wp-content/uploads/2024/08/profile-pic.webp" alt="Anurag Rishi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="fac-img-placeholder" style="display:none;">
+            <div class="fac-initials">AR</div>
+          </div>
+        </div>
+        <div class="fac-img-corner"></div>
+      </div>
+      <div class="fac-content">
+        <div class="tag">Your Facilitator</div>
+        <h2 class="h2">Meet<br/><em>Anurag Rishi</em></h2>
+        <p>A holistic wellness practitioner and spiritual researcher, Anurag Rishi is known as the Modern Rishi — a bridge between the timeless wisdom of ancient India and the frontier insights of contemporary science.</p>
+        <p>His work is rooted in Advaita Vedanta, the Upanishads, and classical Indian healing philosophies, woven together with quantum physics, psychology, and mind–body medicine. What makes his teaching rare is simple: he shares only what he has lived.</p>
+        <p>His retreats and programs have reached people across 30+ countries. The Know Thyself residential journey and his digital programs have transformed thousands of lives — not through belief, but through direct experience.</p>
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-val">11+</div>
+            <div class="stat-lbl">Years Teaching</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">30+</div>
+            <div class="stat-lbl">Countries</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">1500+</div>
+            <div class="stat-lbl">Lives Changed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section" id="testimonials">
+  <div class="container">
+    <div class="tag">Success Stories</div>
+    <h2 class="h2">Voices of<br/><em>Transformation</em></h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-body">"Anurag's teachings don't just inform you — they transform you from the inside. After his program, my relationship with my own mind completely changed. I feel genuinely at peace."</p>
+        <div class="testi-author">Priya M.</div>
+        <div class="testi-loc">Mumbai, India</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-body">"I attended the Awaken Your Healing Intelligence workshop and it was unlike anything I had experienced before. Anurag explains deep concepts so simply. My health has genuinely improved."</p>
+        <div class="testi-author">Rajesh K.</div>
+        <div class="testi-loc">Delhi NCR, India</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-body">"The Know Thyself retreat was the most profound experience of my life. Six days that undid years of inner conflict. I returned home a different person — aligned, clear, and free."</p>
+        <div class="testi-author">Sunita R.</div>
+        <div class="testi-loc">Pune, India</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO TESTIMONIALS -->
+<section class="video-testi" id="video-stories">
+  <div class="container">
+    <div class="video-testi-header">
+      <div class="tag" style="justify-content:center;">Video Testimonials</div>
+      <h2 class="h2">Hear It From<br/><em>Them Directly</em></h2>
+      <p>Real people. Real transformations. Watch what participants say in their own words after experiencing Anurag Rishi's teachings.</p>
+    </div>
+
+    <div class="video-grid">
+
+      <!-- VIDEO CARD 1 — Replace YOUR_YOUTUBE_VIDEO_ID_1 with actual ID -->
+      <div class="video-card">
+        <div class="video-embed">
+          <!-- OPTION A: YouTube embed — paste your YouTube video ID below -->
+          <!-- <iframe src="https://www.youtube.com/embed/YOUR_YOUTUBE_VIDEO_ID_1" allowfullscreen></iframe> -->
+
+          <!-- OPTION B: Direct video file -->
+          <!-- <video controls style="position:absolute;inset:0;width:100%;height:100%;"><source src="YOUR_VIDEO_URL.mp4" type="video/mp4"></video> -->
+
+          <!-- Placeholder (remove this div once you add your video above) -->
+          <div class="video-placeholder">
+            <div class="play-ring"><div class="play-triangle"></div></div>
+            <span class="video-placeholder-text">Add Video URL Here</span>
+          </div>
+        </div>
+        <div class="video-info">
+          <div class="video-name">Participant Name</div>
+          <div class="video-role">City, India</div>
+          <div class="video-quote">"Edit this with a short quote or key takeaway from the video..."</div>
+        </div>
+      </div>
+
+      <!-- VIDEO CARD 2 -->
+      <div class="video-card">
+        <div class="video-embed">
+          <!-- <iframe src="https://www.youtube.com/embed/YOUR_YOUTUBE_VIDEO_ID_2" allowfullscreen></iframe> -->
+          <div class="video-placeholder">
+            <div class="play-ring"><div class="play-triangle"></div></div>
+            <span class="video-placeholder-text">Add Video URL Here</span>
+          </div>
+        </div>
+        <div class="video-info">
+          <div class="video-name">Participant Name</div>
+          <div class="video-role">City, India</div>
+          <div class="video-quote">"Edit this with a short quote or key takeaway from the video..."</div>
+        </div>
+      </div>
+
+      <!-- VIDEO CARD 3 -->
+      <div class="video-card">
+        <div class="video-embed">
+          <!-- <iframe src="https://www.youtube.com/embed/YOUR_YOUTUBE_VIDEO_ID_3" allowfullscreen></iframe> -->
+          <div class="video-placeholder">
+            <div class="play-ring"><div class="play-triangle"></div></div>
+            <span class="video-placeholder-text">Add Video URL Here</span>
+          </div>
+        </div>
+        <div class="video-info">
+          <div class="video-name">Participant Name</div>
+          <div class="video-role">City, India</div>
+          <div class="video-quote">"Edit this with a short quote or key takeaway from the video..."</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HOW TO ADD VIDEOS GUIDE -->
+    <div class="video-howto">
+      <div class="howto-icon">💡</div>
+      <div>
+        <div class="howto-title">How to Add Your Testimony Videos</div>
+        <ul class="howto-steps">
+          <li><span>YouTube →</span> Video open karo → Share → Embed → Copy ID (e.g. <code>dQw4w9WgXcQ</code>) → paste karo <code>YOUR_YOUTUBE_VIDEO_ID</code> ki jagah</li>
+          <li><span>Instagram →</span> Video ko YouTube pe upload karo pehle, phir upar wala step follow karo</li>
+          <li><span>MP4 File →</span> Video ko hosting pe upload karo → direct URL paste karo <code>YOUR_VIDEO_URL.mp4</code> ki jagah</li>
+          <li><span>Uncomment →</span> Jis line pe video add karo, uske aage se <code>&lt;!--</code> aur peeche se <code>--&gt;</code> hata do. Placeholder div delete kar do.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="container" style="text-align:center;">
+    <div class="tag" style="justify-content:center;">Common Questions</div>
+    <h2 class="h2">Frequently Asked<br/><em>Questions</em></h2>
+    <div class="faq-list" style="text-align:left;">
+      <div class="faq-item open">
+        <div class="faq-q">When is the live session? <span class="icon">+</span></div>
+        <div class="faq-a">The Intentional Alignment Masterclass takes place live on 28th March 2026. A Zoom link and joining details will be shared with you upon registration.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Will there be a recording? <span class="icon">+</span></div>
+        <div class="faq-a">Yes, registered participants will receive access to the session recording for a limited period after the live session.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I need prior meditation experience? <span class="icon">+</span></div>
+        <div class="faq-a">Not at all. This masterclass is designed for everyone — whether you're completely new to this path or have been practicing for years. Anurag's ability to make complex ideas accessible is at the heart of his teaching.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What makes this different from a regular meditation class? <span class="icon">+</span></div>
+        <div class="faq-a">Intentional Alignment combines Vedic wisdom, quantum science, breathwork, and practical life tools into one cohesive experience. It is not passive listening — it is an active inner journey.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How do I register? <span class="icon">+</span></div>
+        <div class="faq-a">Simply click the "Reserve My Seat" button anywhere on this page to complete your registration via the secure payment link. Your place is confirmed upon payment.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section class="register" id="register">
+  <div class="container">
+    <div class="register-wrap">
+      <div class="tag" style="justify-content:center;">Registration</div>
+      <h2 class="h2">Secure Your<br/><em>Place Today</em></h2>
+      <p>Seats are intentionally limited to preserve the depth of the experience. Register now to hold your place in the 28th March live session.</p>
+
+      <div class="form-fields">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" placeholder="Your first name"/>
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" placeholder="Your last name"/>
+        </div>
+        <div class="field full">
+          <label>Email Address</label>
+          <input type="email" placeholder="you@example.com"/>
+        </div>
+        <div class="field full">
+          <label>WhatsApp Number</label>
+          <input type="tel" placeholder="+91 98765 43210"/>
+        </div>
+        <div class="field full">
+          <label>What do you seek from this session?</label>
+          <input type="text" placeholder="e.g. clarity, healing, inner peace..."/>
+        </div>
+        <div class="form-submit full">
+          <a href="https://rzp.io/rzp/2DBAip09" target="_blank" class="btn-gold">Proceed to Payment — ₹199</a>
+        </div>
+      </div>
+      <p class="form-note">By registering, you step into your alignment. Joining details will be sent to your email within 24 hours of payment confirmation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">Anurag Rishi</div>
+      <p class="footer-tagline">Holistic Wellness Coach · Bridging ancient Indian wisdom with modern science for real, lasting transformation.</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://anuragrishi.com" target="_blank">Website</a>
+      <a href="https://anuragrishi.com/about" target="_blank">About</a>
+      <a href="https://anuragrishi.com/programs" target="_blank">Programs</a>
+      <a href="/cdn-cgi/l/email-protection#a5c8c4ccc9e5c4cbd0d7c4c2d7ccd6cdcc8bc6cac8">Contact</a>
+    </div>
+  </div>
+  <div class="footer-copy">© 2026 Anurag Rishi · All Rights Reserved · anuragrishi.com</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySel
